@@ -7,15 +7,21 @@ export default function Home() {
     const [todos, setTodos] = useState<string[]>([]);
     const [input, setInput] = useState('');
 
+    // Debug env and client
+    console.log('🔍 env URL:', process.env.NEXT_PUBLIC_SUPABASE_URL);
+    console.log('🔍 supabase client:', supabase);
+
     const fetchTodos = async () => {
+        console.log('📦 Fetching todos...');
         const { data, error } = await supabase
-            .from('todo') // Table name (singular)
+            .from('todo') // Table name
             .select('title')
             .order('created_at', { ascending: false });
 
         if (error) {
-            console.error('Error fetching todos:', error.message);
+            console.error('❌ Error fetching todos:', error.message);
         } else {
+            console.log('✅ Todos fetched:', data);
             setTodos(data.map((item) => item.title));
         }
     };
@@ -23,13 +29,15 @@ export default function Home() {
     const addTodo = async () => {
         if (!input.trim()) return;
 
+        console.log('➕ Attempting to insert todo...');
         const { error } = await supabase
-            .from('todo') // Table name
+            .from('todo')
             .insert([{ title: input.trim() }]);
 
         if (error) {
-            console.error('Error inserting todo:', error.message);
+            console.error('❌ Error inserting todo:', error.message);
         } else {
+            console.log('✅ Todo inserted');
             setInput('');
             fetchTodos();
         }
