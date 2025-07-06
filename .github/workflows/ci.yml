@@ -2,36 +2,36 @@ name: CI Pipeline
 
 on:
   push:
-    branches: [main]
+    branches: [main, test]
   pull_request:
-    branches: [main]
+    branches: [main, test]
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Code
+      - name: 📥 Checkout Code
         uses: actions/checkout@v3
 
-      - name: Setup Node
+      - name: 🧰 Setup Node
         uses: actions/setup-node@v3
         with:
           node-version: 20
 
-      - name: Cache node_modules
+      - name: 📦 Cache node_modules
         uses: actions/cache@v3
         with:
           path: ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
 
-      - name: Install dependencies
+      - name: 📦 Install dependencies
         run: npm ci
 
-      - name: Lint and Type Check
+      - name: 🧹 Lint and Type Check
         run: |
           npm run lint
           npm run type-check
 
-      - name: Build the App
+      - name: 🏗 Build the App
         run: npm run build
