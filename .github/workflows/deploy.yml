@@ -3,7 +3,8 @@ name: Deploy to Vercel
 on:
   push:
     branches:
-      - main  # Deploy only from main branch
+      - main
+      - test
 
 jobs:
   deploy:
@@ -17,7 +18,12 @@ jobs:
         run: npm install --global vercel
 
       - name: 🚀 Deploy to Vercel
-        run: vercel --prod --yes --token=${{ secrets.VERCEL_TOKEN }} --confirm
+        run: |
+          if [[ "$GITHUB_REF_NAME" == "main" ]]; then
+            vercel --prod --yes --token=${{ secrets.VERCEL_TOKEN }} --confirm
+          else
+            vercel --yes --token=${{ secrets.VERCEL_TOKEN }} --confirm
+          fi
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
